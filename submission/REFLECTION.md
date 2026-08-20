@@ -104,25 +104,54 @@ Knee ở 6 threads, không phải 12 physical cores như kỳ vọng. Lý do: de
 
 ## 6. Bonus  *(optional — tối đa 20 điểm)*
 
-**Đã làm:** B1 (build-llama + compare-builds)
+**Đã làm:** B1 (build-llama), B2 (sweep-quant, sweep-ctx, sweep-batch), B3 (bonus insights), B5 (mlx-compare, semantic-cache)
 
-**Numbers:**
-
+### B1 - Build from source
 ```
-before:  31.0 tok/s (prebuilt release, -ngl 0)
-after:   32.5 tok/s (source build -DGGML_NATIVE=ON, -ngl 0)
+before:  31.0 tok/s (prebuilt, ngl=0)
+after:   32.5 tok/s (source build -DGGML_NATIVE=ON, ngl=0)
 speedup: 1.05x
 ```
+Compiler flag difference is modest on M4 Pro — both detect NEON. **GPU offload is the real win: 2.32x speedup** (32.5 → 75.3 tok/s at ngl=99).
 
-**Điều này nói lên gì mà deck chưa nói:**
+### B2 - Quantization sweep
+| Quantization | tok/s | tok/s per GB |
+|--------------|-------|--------------|
+| UD-Q2_K_XL | 79.3 | 35.4 ✅ |
+| UD-Q4_K_XL | 79.1 | 26.6 |
+| UD-Q6_K_XL | 75.5 | 17.2 |
 
-1. **Compiler flag difference is modest on M4 Pro**: Both prebuilt and source build detect NEON at runtime. M4 Pro's microarchitecture is already highly optimized, so there's less room for `-DGGML_NATIVE=ON` to improve.
+**Would ship UD-Q2_K_XL** — same speed, 25% smaller, best efficiency.
 
-2. **Memory bandwidth is the real ceiling**: The tg128 decode benchmark is memory-bandwidth bound. Compiler optimizations cannot overcome the bandwidth ceiling — the 1.05x improvement is within measurement variance.
+### B2 - Context length sweep
+| Tokens | Prefill | vs Linear |
+|--------|---------|-----------|
+| 256 | 214 ms | 1.00x |
+| 4096 | 3686 ms | 1.08x |
+| 16384 | 19129 ms | **1.40x** |
 
-3. **GPU offload >> compiler flags**: The comparison also showed `-ngl 99` (Metal GPU offload) gives **2.32x speedup** (32.5 → 75.3 tok/s). On Apple Silicon, Metal offload is the dominant optimization, not compiler flags.
+**O(N²) bend confirmed at 8k+ tokens.** Max affordable context ≈ 2k tokens for SLO < 5s.
 
-**Conclusion for M4 Pro users:** Focus on GPU offload (`-ngl`) and thread tuning (`-t`) rather than recompiling. The compiler benefit is real but small (~5%) on modern optimized CPUs.
+### B2 - Batch size sweep
+Best: `-b 512 -ub 512` (1217 tok/s). Past 512, diminishing returns. Would run this in production.
+
+### B5 - MLX vs llama.cpp Metal
+| Runtime | Decode | TTFT P95 |
+|---------|--------|----------|
+| llama.cpp | 79.7 tok/s | 84 ms |
+| MLX | 108.6 tok/s | 142 ms |
+
+**MLX wins decode (1.36x), llama.cpp wins P95 and portability.** Local dev → MLX, production → llama.cpp.
+
+### C8 - Semantic cache
+- Hit rate: 38% with weak embedder
+- **False hit:** "prefix caching" hit at 0.85 similarity — unrelated topic!
+- **Miss:** Paraphrases scored 0.72-0.76, below 0.80 threshold
+- **No single threshold works** — need dedicated embedder (Qwen3/BGE)
+- **Security:** Shared cache has timing side channel risk → salt per tenant
+
+### Key insight from all bonuses:
+On M4 Pro, **GPU offload** and **quantization choice** matter far more than compiler flags. Focus optimization budget there.
 
 ---
 
