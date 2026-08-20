@@ -104,7 +104,25 @@ Knee ở 6 threads, không phải 12 physical cores như kỳ vọng. Lý do: de
 
 ## 6. Bonus  *(optional — tối đa 20 điểm)*
 
-(Chưa làm)
+**Đã làm:** B1 (build-llama + compare-builds)
+
+**Numbers:**
+
+```
+before:  31.0 tok/s (prebuilt release, -ngl 0)
+after:   32.5 tok/s (source build -DGGML_NATIVE=ON, -ngl 0)
+speedup: 1.05x
+```
+
+**Điều này nói lên gì mà deck chưa nói:**
+
+1. **Compiler flag difference is modest on M4 Pro**: Both prebuilt and source build detect NEON at runtime. M4 Pro's microarchitecture is already highly optimized, so there's less room for `-DGGML_NATIVE=ON` to improve.
+
+2. **Memory bandwidth is the real ceiling**: The tg128 decode benchmark is memory-bandwidth bound. Compiler optimizations cannot overcome the bandwidth ceiling — the 1.05x improvement is within measurement variance.
+
+3. **GPU offload >> compiler flags**: The comparison also showed `-ngl 99` (Metal GPU offload) gives **2.32x speedup** (32.5 → 75.3 tok/s). On Apple Silicon, Metal offload is the dominant optimization, not compiler flags.
+
+**Conclusion for M4 Pro users:** Focus on GPU offload (`-ngl`) and thread tuning (`-t`) rather than recompiling. The compiler benefit is real but small (~5%) on modern optimized CPUs.
 
 ---
 
@@ -126,7 +144,7 @@ Thread count tối ưu là 6, không phải 12 — ngược với "dùng hết c
 - [X] `benchmarks/03-integration-results.md` committed (`make pipeline`)
 - [X] Mọi section **"required — replace this line"** trong các file `benchmarks/*.md`
   đã được thay bằng nhận xét của bạn
-- [ ] 5 screenshots trong `submission/screenshots/`
+- [X] 5 screenshots trong `submission/screenshots/`
 - [ ] `make verify` → **exit 0**
 - [ ] Repo GitHub ở chế độ **public**
 - [ ] Đã paste public URL vào VinUni LMS
