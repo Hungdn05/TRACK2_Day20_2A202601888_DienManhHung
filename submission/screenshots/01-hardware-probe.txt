@@ -1,0 +1,23 @@
+────────────────────────────────────────────────────────────────
+  Platform : Darwin 25.6.0 (arm64)
+  CPU      : Apple M4 Pro
+             12 physical · 12 logical cores
+             extensions: NEON
+  RAM      : 24.0 GB
+  GPU      : apple_metal
+             - apple_metal: Apple Silicon (Metal built into the release binary)
+────────────────────────────────────────────────────────────────
+
+  Model         : Gemma 4 E2B  [LAB_MODEL=gemma4-e2b]
+                  unsloth/gemma-4-E2B-it-GGUF  (~5.2 GB)
+                  primary  gemma-4-E2B-it-UD-Q4_K_XL.gguf  (2.97 GB)
+                  compare  gemma-4-E2B-it-UD-Q2_K_XL.gguf  (2.24 GB)
+                  chosen because: enough RAM for the default model
+  Other option  : LAB_MODEL=qwen35-0.8b  ->  Qwen3.5 0.8B, ~0.9 GB, needs 4.0 GB RAM
+  llama.cpp     : prebuilt release b10488  (llama-b10488-bin-macos-arm64.tar.gz)
+  GPU offload   : ACTIVE -- MTL0: Apple M4 Pro (18186 MiB, 18185 MiB free)
+  source build  : -DGGML_METAL=ON  (bonus B1 -- not used by the base track)
+  Tracks open   : 01-measure, 02-serve, 03-integrate, bonus/sweeps, bonus/mlx
+────────────────────────────────────────────────────────────────
+
+Saved hardware.json -- every other track reads this.
