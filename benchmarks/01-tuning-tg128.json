@@ -7,23 +7,23 @@
   "rows": [
     {
       "threads": 1,
-      "tok_s": 82.78
+      "tok_s": 83.83
     },
     {
       "threads": 6,
-      "tok_s": 84.14
+      "tok_s": 84.16
     },
     {
       "threads": 12,
-      "tok_s": 79.13
+      "tok_s": 79.11
     },
     {
       "threads": 24,
-      "tok_s": 68.53
+      "tok_s": 70.9
     }
   ],
   "best": {
     "threads": 6,
-    "tok_s": 84.14
+    "tok_s": 84.16
   }
 }

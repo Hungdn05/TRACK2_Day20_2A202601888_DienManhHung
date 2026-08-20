@@ -3,13 +3,13 @@
   "mean_ms": {
     "embed": 0.0,
     "retrieve": 0.0,
-    "llm": 566.6,
-    "total": 566.6
+    "llm": 525.5,
+    "total": 525.6
   },
   "results": [
     {
       "query": "Why is goodput more useful than raw throughput?",
-      "answer": "Goodput@SLO counts only the requests per second that met the TTFT and TPOT targets.",
+      "answer": "Goodput@SLO counts only the requests per second that met the TTFT and TPOT targets. Throughput at saturation ignores SLOs.",
       "contexts": [
         {
           "id": "goodput",
@@ -28,14 +28,14 @@
       "timings_ms": {
         "embed": 0.0,
         "retrieve": 0.0,
-        "llm": 784.0,
-        "total": 784.0
+        "llm": 680.5,
+        "total": 680.5
       },
       "server_timings": {
-        "prompt_n": 149,
-        "prompt_ms": 467.057,
-        "predicted_n": 22,
-        "predicted_ms": 274.781
+        "prompt_n": 150,
+        "prompt_ms": 288.889,
+        "predicted_n": 30,
+        "predicted_ms": 364.807
       }
     },
     {
@@ -59,14 +59,14 @@
       "timings_ms": {
         "embed": 0.0,
         "retrieve": 0.0,
-        "llm": 448.9,
-        "total": 448.9
+        "llm": 437.2,
+        "total": 437.3
       },
       "server_timings": {
         "prompt_n": 114,
-        "prompt_ms": 155.052,
+        "prompt_ms": 153.041,
         "predicted_n": 23,
-        "predicted_ms": 286.949
+        "predicted_ms": 277.714
       }
     },
     {
@@ -90,14 +90,14 @@
       "timings_ms": {
         "embed": 0.0,
         "retrieve": 0.0,
-        "llm": 466.9,
-        "total": 466.9
+        "llm": 458.9,
+        "total": 459.0
       },
       "server_timings": {
         "prompt_n": 113,
-        "prompt_ms": 156.766,
+        "prompt_ms": 157.053,
         "predicted_n": 24,
-        "predicted_ms": 303.835
+        "predicted_ms": 295.554
       }
     }
   ]
